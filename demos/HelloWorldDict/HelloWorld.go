@@ -1,5 +1,5 @@
 // 被动消息示例
-// 客户端At机器人并传入 hello，  则收到机器人回复： Hello World
+// 客户端At机器人并传入 hello，  则收到机器人回复： hello world
 package main
 
 import (
@@ -42,7 +42,7 @@ func init() {
 	}
 	log.Println(conf)
 	
-	d, err := ioutil.ReadFile("./dict.json")//读取文件输入到map名为dist，我只是觉得独立文件比较好编辑，抑或是引入一个go文件好呢？
+	d, err := ioutil.ReadFile("./dict.json")//读取文件输入到map名为dict，我只是觉得独立文件比较好编辑，抑或是引入一个go文件好呢？
     if err != nil {
         fmt.Print(err)
     }
@@ -89,26 +89,26 @@ func main() {
 		}else{//不在dict中再处理
 		    switch input { //下面仅是最新禁言功能示例，机器人需设置为管理员
 			case "禁言套餐"://禁发消息的用户
-			  tmparr := getjinyan()//返回文本和时长秒string
-			  fmt.Println("禁言数据：",tmparr)
-			  api.PostMessage(ctx, data.ChannelID, &dto.MessageToCreate{MsgID: data.ID, Content: message.MentionUser(data.Author.ID) + tmparr.Text})
-			  tsecond,_ := strconv.ParseInt(tmparr.Tsecond, 10, 64)//文本转int64
-			  mute := &dto.UpdateGuildMute{//个人禁言
-			MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+tsecond, 10),//设置结束时间戳秒,int64按十进制转成string
-			//MuteSeconds: tmparr.Tsecond,//设置时长秒
-			}
-			err := api.MemberMute(ctx, data.GuildID, data.Author.ID, mute)
-			if err != nil {
-			log.Println(err)
-			}
+				tmparr := getjinyan()//返回文本和时长秒string
+				fmt.Println("禁言数据：",tmparr)
+				api.PostMessage(ctx, data.ChannelID, &dto.MessageToCreate{MsgID: data.ID, Content: message.MentionUser(data.Author.ID) + tmparr.Text})
+				tsecond,_ := strconv.ParseInt(tmparr.Tsecond, 10, 64)//文本转int64
+				mute := &dto.UpdateGuildMute{//个人禁言
+					MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+tsecond, 10),//设置结束时间戳秒,int64按十进制转成string
+					//MuteSeconds: tmparr.Tsecond,//设置时长秒
+				}
+				err := api.MemberMute(ctx, data.GuildID, data.Author.ID, mute)
+				if err != nil {
+					log.Println(err)
+				}
 			case "冷静"://全频道禁言，不建议正式使用，否则人人能通过机器人禁言
-			    mute := &dto.UpdateGuildMute{
-			      MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+60, 10),//一分钟
-			    }
-			  err := api.GuildMute(ctx, data.GuildID, mute)
-			  if err != nil {
-			    log.Println(err)
-			  }
+				mute := &dto.UpdateGuildMute{
+					MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+60, 10),//一分钟
+				}
+				err := api.GuildMute(ctx, data.GuildID, mute)
+				if err != nil {
+					log.Println(err)
+				}
 			}
 		}
 		return nil
