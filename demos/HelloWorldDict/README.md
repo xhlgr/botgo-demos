@@ -1,6 +1,6 @@
 本示例演示被动消息使用方法
 
-本示例根据[botgosdk收发示例](https://github.com/tencent-connect/botgo/tree/master/examples/receive-and-send)及[botgo-demos](https://github.com/tencent-connect/botgo-demos)拼接而成。
+本人未系统学习Go，代码裁缝，如有不合理也正常。本示例根据[botgosdk收发示例](https://github.com/tencent-connect/botgo/tree/master/examples/receive-and-send)及[botgo-demos](https://github.com/tencent-connect/botgo-demos)拼接而成。
 
 ## demo运行步骤
 
