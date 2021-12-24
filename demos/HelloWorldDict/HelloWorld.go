@@ -94,7 +94,7 @@ func main() {
 				api.PostMessage(ctx, data.ChannelID, &dto.MessageToCreate{MsgID: data.ID, Content: message.MentionUser(data.Author.ID) + tmparr.Text})
 				tsecond,_ := strconv.ParseInt(tmparr.Tsecond, 10, 64)//文本转int64
 				mute := &dto.UpdateGuildMute{//个人禁言
-					MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+tsecond, 10),//设置结束时间戳秒,int64按十进制转成string
+					MuteEndTimestamp: strconv.FormatInt(time.Now().Unix()+tsecond, 10),//设置结束时间戳秒,int64按十进制转成string
 					//MuteSeconds: tmparr.Tsecond,//设置时长秒
 				}
 				err := api.MemberMute(ctx, data.GuildID, data.Author.ID, mute)
@@ -118,7 +118,7 @@ func main() {
 				if adminflag {
 				    api.PostMessage(ctx, data.ChannelID, &dto.MessageToCreate{MsgID: data.ID, Content: "管理员"+message.MentionUser(data.Author.ID)+"设置冷静一分钟"})
 				    mute := &dto.UpdateGuildMute{
-				      MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+60, 10),//一分钟
+				      MuteEndTimestamp: strconv.FormatInt(time.Now().Unix()+60, 10),//一分钟
 				    }
 				    err := api.GuildMute(ctx, data.GuildID, mute)
 				    if err != nil {
