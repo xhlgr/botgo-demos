@@ -43,13 +43,13 @@ func init() {
 	log.Println(conf)
 	
 	d, err := ioutil.ReadFile("./dict.json")//读取文件输入到map名为dict，我只是觉得独立文件比较好编辑，抑或是引入一个go文件好呢？
-    if err != nil {
-        fmt.Print(err)
-    }
-    err = json.Unmarshal([]byte(string(d)), &dict)
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		fmt.Print(err)
+	}
+	err = json.Unmarshal([]byte(string(d)), &dict)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
@@ -101,13 +101,31 @@ func main() {
 				if err != nil {
 					log.Println(err)
 				}
-			case "冷静"://全频道禁言，不建议正式使用，否则人人能通过机器人禁言
-				mute := &dto.UpdateGuildMute{
-					MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+60, 10),//一分钟
-				}
-				err := api.GuildMute(ctx, data.GuildID, mute)
+			case "冷静"://全频道禁言，管理员可以通过此口令禁言
+				member, e := api.GuildMember(ctx, data.GuildID, data.Author.ID)
 				if err != nil {
+				    log.Println(e)
+				}
+				fmt.Println("GuildMember：",member.Roles)
+				var adminflag bool//管理员标记
+				adminflag =false
+				for _,value := range member.Roles {
+				    if value =="2" || value =="4"{//管理员2群主4子频道管理员5其他成员1
+					adminflag = true
+					break
+				    }
+				}
+				if adminflag {
+				    api.PostMessage(ctx, data.ChannelID, &dto.MessageToCreate{MsgID: data.ID, Content: "管理员"+message.MentionUser(data.Author.ID)+"设置冷静一分钟"})
+				    mute := &dto.UpdateGuildMute{
+				      MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+60, 10),//一分钟
+				    }
+				    err := api.GuildMute(ctx, data.GuildID, mute)
+				    if err != nil {
 					log.Println(err)
+				    }
+				}else{
+				    api.PostMessage(ctx, data.ChannelID, &dto.MessageToCreate{MsgID: data.ID, Content: message.MentionUser(data.Author.ID)+"您不是管理员无法设置禁言"})
 				}
 			}
 		}
