@@ -71,7 +71,7 @@ func main() {
 		fmt.Println(data.Author.ID, data.Author.Username)
 
 		// 发被动消息到频道
-    input := strings.ToLower(message.ETLInput(data.Content))//message.ETLInput去掉at机器人(去掉第一个at)并去掉两边的空格即得到关键词并转小写字母
+		input := strings.ToLower(message.ETLInput(data.Content))//message.ETLInput去掉at机器人(去掉第一个at)并去掉两边的空格即得到关键词并转小写字母
 		fmt.Println(input)
 		// 根据词典中的输入，进行输出
 		if v, ok := dict[input]; ok {//在词典中直接对应输出
@@ -83,33 +83,33 @@ func main() {
 			); err != nil {
 				log.Fatalln(err)
 			}
-    }else if strings.Index(input, "天气") != -1{//格式：天气+城市名(如北京)
-			tmpname := data.Content[strings.Index(data.Content, "天气")+6:]//中文算3*2
-			api.PostMessage(ctx, data.ChannelID, &dto.MessageToCreate{MsgID: data.ID, Content: message.MentionUser(data.Author.ID) + getWeather(tmpname)})
+		}else if strings.Index(input, "天气") != -1{//格式：天气+城市名(如北京)
+				tmpname := data.Content[strings.Index(data.Content, "天气")+6:]//中文算3*2
+				api.PostMessage(ctx, data.ChannelID, &dto.MessageToCreate{MsgID: data.ID, Content: message.MentionUser(data.Author.ID) + getWeather(tmpname)})
 		}else{//不在dict中再处理
 		    switch input { //下面仅是最新禁言功能示例，机器人需设置为管理员
-          case "禁言套餐"://禁发消息的用户
-              tmparr := getjinyan()//返回文本和时长秒string
-              fmt.Println("禁言数据：",tmparr)
-              api.PostMessage(ctx, data.ChannelID, &dto.MessageToCreate{MsgID: data.ID, Content: message.MentionUser(data.Author.ID) + tmparr.Text})
-              tsecond,_ := strconv.ParseInt(tmparr.Tsecond, 10, 64)//文本转int64
-              mute := &dto.UpdateGuildMute{//个人禁言
-            MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+tsecond, 10),//设置结束时间戳秒,int64按十进制转成string
-            //MuteSeconds: tmparr.Tsecond,//设置时长秒
-          }
-          err := api.MemberMute(ctx, data.GuildID, data.Author.ID, mute)
-          if err != nil {
-            log.Println(err)
-          }
-        case "冷静"://全频道禁言，不建议正式使用，否则人人能通过机器人禁言
-            mute := &dto.UpdateGuildMute{
-              MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+60, 10),//一分钟
-            }
-          err := api.GuildMute(ctx, data.GuildID, mute)
-          if err != nil {
-            log.Println(err)
-          }
-    		}
+			case "禁言套餐"://禁发消息的用户
+			  tmparr := getjinyan()//返回文本和时长秒string
+			  fmt.Println("禁言数据：",tmparr)
+			  api.PostMessage(ctx, data.ChannelID, &dto.MessageToCreate{MsgID: data.ID, Content: message.MentionUser(data.Author.ID) + tmparr.Text})
+			  tsecond,_ := strconv.ParseInt(tmparr.Tsecond, 10, 64)//文本转int64
+			  mute := &dto.UpdateGuildMute{//个人禁言
+			MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+tsecond, 10),//设置结束时间戳秒,int64按十进制转成string
+			//MuteSeconds: tmparr.Tsecond,//设置时长秒
+			}
+			err := api.MemberMute(ctx, data.GuildID, data.Author.ID, mute)
+			if err != nil {
+			log.Println(err)
+			}
+			case "冷静"://全频道禁言，不建议正式使用，否则人人能通过机器人禁言
+			    mute := &dto.UpdateGuildMute{
+			      MuteEndTimstamp: strconv.FormatInt(time.Now().Unix()+60, 10),//一分钟
+			    }
+			  err := api.GuildMute(ctx, data.GuildID, mute)
+			  if err != nil {
+			    log.Println(err)
+			  }
+			}
 		}
 		return nil
 	}
